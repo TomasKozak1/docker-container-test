@@ -29,6 +29,11 @@ jobs:
           chmod +x gradlew
           ./gradlew :platform:build -x detekt
 
+    - name: Data query service
+      run:  |
+          chmod +x gradlew
+          ./gradlew :data-query-service:build -x detekt
+
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -51,3 +56,10 @@ jobs:
         push: true
         context: ./platform
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/platform:latest
+
+    - name: Build and push data query service
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        context: ./platform
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/data-query-service:latest
