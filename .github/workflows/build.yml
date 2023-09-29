@@ -19,20 +19,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build account service
+    - name: Build backend services
       run:  |
           chmod +x gradlew
-          ./gradlew :account-service:build -x detekt
-
-    - name: Build platform service
-      run:  |
-          chmod +x gradlew
-          ./gradlew :platform:build -x detekt
-
-    - name: Data query service
-      run:  |
-          chmod +x gradlew
-          ./gradlew :data-query-service:build -x detekt
+          ./gradlew build -x detekt
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
@@ -61,5 +51,19 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         push: true
-        context: ./platform
+        context: ./data-query-service
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/data-query-service:latest
+
+    - name: Build and push trino-rule-update-service
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        context: ./trino-rule-update-service
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/trino-rule-update-service:latest
+    
+    - name: Build and push cloud-storage-service
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        context: ./cloud-storage-service
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/cloud-storage-service:latest
